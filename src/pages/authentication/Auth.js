@@ -1,5 +1,6 @@
 import { DropdownButton, Dropdown } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { redirect, useNavigate } from "react-router-dom";
 
 const Auth = () => {
   const [showSignUp, setShowSignup] = useState(false);
@@ -10,6 +11,17 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
+  const redirectURL =()=>{
+    navigate("/");
+  }
+
+  useEffect(()=>{
+    if (localStorage.getItem("token")){
+      redirectURL();
+    }
+  })
 
   const updateSignUpData = (e) => {
     const id = e.target.id;
@@ -23,12 +35,50 @@ const Auth = () => {
       setPassword(e.target.value);
     } else if (id === email) {
       setEmail(e.target.value);
-    }
+    } 
+    setErrorMessage("");
+    setMessage("");
   };
 
-  const singupFn =()=>{
-    
+  const validateData=(data)=>{
+    if(data.userId.included(' ')){
+      setErrorMessage("User Id should not contain spaces")
+      return false;
+    }
+    if(data.userId.length <5 || data.userId.length >10){
+      setErrorMessage("User Id shouldbe 5 to 10 charetors long")
+      return false;
+    }
+    if(data.password.length <6 || data.password.length >10){
+      setErrorMessage("Password shouldbe 6 to 10 charetors long")
+      return false;
+    }
+    if(data.password.included(' ')){
+      setErrorMessage("Password shuld not contain spaces")
+      return false;
+    }
+    if(data.userName.length <6 || data.userName.length >10){
+      setErrorMessage("User Name shouldbe 6 to 10 charetors long")
+      return false;
+    }
+    if(data.userName.included(' ')){
+      setErrorMessage("User Name shuld not contain spaces")
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  const singupFn =(e)=>{
+    e.preventDefault();
+    console.log("Signup Fn Ok")    
   } 
+
+  const loginFn =(e)=>{
+    e.preventDefault();
+    console.log("Login Fn Ok")
+  }
 
   const handleSelect = (e) => {
     setUserType(e);
